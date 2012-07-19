@@ -1,6 +1,6 @@
 // Stupid jQuery table plugin.
 
-// Call on a table 
+// Call on a table
 // sortFns: Sort functions for your datatypes.
 (function($){
   $.fn.stupidtable = function(sortFns){
@@ -19,12 +19,12 @@
 
     // Array comparison. See http://stackoverflow.com/a/8618383
     var arrays_equal = function(a,b) { return !!a && !!b && !(a<b || b<a);}
-    
+
     // Return the resulting indexes of a sort so we can apply
     // this result elsewhere. This returns an array of index numbers.
     // return[0] = x means "arr's 0th element is now at x"
     var sort_map =  function(arr, sort_function){
-      var sorted = arr.slice(0).sort(sort_function); 
+      var sorted = arr.slice(0).sort(sort_function);
       var map = [];
       var index = 0;
       for(var i=0; i<arr.length; i++){
@@ -40,7 +40,7 @@
       return map;
     }
 
-    // Apply a sort map to the array. 
+    // Apply a sort map to the array.
     var apply_sort_map = function(arr, map){
       var clone = arr.slice(0);
       for(var i=0; i<map.length; i++){
@@ -65,7 +65,8 @@
     //                  Begin execution!                    //
     // ==================================================== //
     // Do sorting when THs are clicked
-    table.delegate("th", "click", function(){
+    //table.delegate("th", "click", function(){
+    table.delegate("th", "click", function(ev){
       var trs = table.find("tbody tr");
       var i = $(this).index();
       var classes = $(this).attr("class");
@@ -87,7 +88,7 @@
         }
       }
       // Don't attempt to sort if no data type
-      if(!type){return false;}
+      if(!type){return;}
 
       var sortMethod = sortFns[type];
 
@@ -99,8 +100,18 @@
       trs.each(function(index,tr){
         var e = $(tr).children().eq(i);
         var order_by = e.attr('data-order-by') || e.text();
-	      column.push(order_by);
+        column.push(order_by);
       });
+
+      //getting the current header and check if it was already sorted
+      var th = $( this );
+      var asc = th.hasClass("order-asc");
+
+      //removing the ordened class from all other THs
+      table.find('thead th').removeClass('order-asc order-desc');
+
+      //add the right ordened class
+      th.addClass( asc ? 'order-desc' : 'order-asc' );
 
       // If the column is already sorted, just reverse the order. The sort
       // map is just reversing the indexes.
